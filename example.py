@@ -2,8 +2,9 @@
 import numpy as np
 import julia
 # julia.install() # don't need to execute this every time if environment is set up correctly
-from julia import Pkg, Main 
+from julia import Pkg, Main
 Pkg.activate(".") # this string needs to point to the pareto-leg-control folder
+#Pkg.instantiate() # this needs to be called the first time.
 Main.include("ParetoLegControl.jl") # this string needs to be preceeded by PATH_TO_THIS_FOLDER/
 
 # binding included modules to variables
