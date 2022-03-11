@@ -9,8 +9,8 @@ Definition of system model constants
 const g = 9.81
 const m_body = 2.0
 const m_weight = 1.0
-# const Jm = .5/2*(.087^2+.08^2) # rough approximation motor inertia from thick-walled cylinder model.
-const Jm = 0. # rough approximation motor inertia from thick-walled cylinder model.
+#const Jm = .5/2*(.087^2+.08^2) # rough approximation motor inertia from thick-walled cylinder model.
+const Jm = 2e-3 # rough approximation motor inertia from thick-walled cylinder model.
 
 const foot_offset = 0.03 # distance from kinematic chain closure to foot location in meters
 const spring_knee_offset = 0.015 # radial distance from "knee" joints to free end of extension springs
