@@ -1,0 +1,8 @@
+name = "LegControllers"
+uuid = "9352a376-065d-465f-a6e6-75763fa7748c"
+authors = ["Joseph Sullivan <jgs6156@uw.edu>"]
+version = "0.1.0"
+
+[deps]
+ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"

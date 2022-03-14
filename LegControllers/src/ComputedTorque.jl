@@ -24,9 +24,9 @@ module ComputedTorque
 
     """ Computes all constraints on behavior """
     function constraints(q::Vector{T},p::Designs.Params) where T<:Real
-        Array{T}([    Model.kin_constraints(q,p),
+        Array{T}(vcat(Model.kin_constraints(q,p),
             q[Model.body_idx]
-        ])
+        ))
     end
 
     """ Computes jacobian of constraints """
@@ -82,4 +82,12 @@ module ComputedTorque
         (A\b)[end-size(Model.G,2)+1:end]
     end
 
+#dummy variables for triggering precompilation of functions
+_q = [0.,pi/2,-pi/2,0.,0.]
+_q[[4,5]] = -constraints(_q,Designs.default_params)[[1,2]]
+_qdot = zeros(5)
+_DA = constraints_jac(_q,Designs.default_params)
+_DDA = constraints_hess(_q,Designs.default_params)
+_u = control(_q,_qdot,Designs.default_params, [0.,0.])
+_qddot = dynamics(_q,_qdot,_u,Designs.default_params)
 end

@@ -107,4 +107,10 @@ function kinetic_energy(q::Vector{T},qdot::Vector{T},p::Designs.Params) where T<
     .5*m_body*qdot[body_idx]^2 + .5*Jm*sum(qdot[[θ1_idx,θ2_idx]].^2)
 end
 
+
+_q = [0.,pi/2,-pi/2,0.,0.]
+_q[1] = constraints(_q,Designs.default_params)[1]
+_qdot = zeros(5)
+_DA = constraints_jac(_q,Designs.default_params)
+_DDA = constraints_hess(_q,Designs.default_params)
 end

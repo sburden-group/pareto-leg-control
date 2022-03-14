@@ -106,4 +106,11 @@ module Hopper
         (A\b)[end-size(Model.G,2)+1:end]
     end
 
+_q = [0.,pi/2,-pi/2,0.,0.]
+_q[[4,5]] = -constraints(_q,Designs.default_params)[[1,2]]
+_qdot = zeros(5)
+_DA = constraints_jac(_q,Designs.default_params)
+_DDA = constraints_hess(_q,Designs.default_params)
+_u = control(_q,_qdot,Designs.default_params, [0.,0.])
+_qddot = dynamics(_q,_qdot,_u,Designs.default_params)
 end

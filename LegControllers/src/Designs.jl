@@ -15,6 +15,8 @@ struct Params{T<:Real}
     l2::T          # Tibia length
 end
 
+const default_params = Params(.1,0.,0.,pi/2,.1,0.,0.,-pi/2,.1,0.,0.07,0.2)
+
 """
 Packs a design parameter structure into a vector.
 """
