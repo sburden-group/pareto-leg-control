@@ -8,7 +8,7 @@ module ComputedTorque
     # compute the kinetic energy in all links, and then M would be given from
     # the hessian of the kinetic energy metric (being configuration dependent)
     #const load_m = 1.0; # [Kg]. a lumped parameter that roughly captures leg inertia and gravitational potential
-    const load_m = 1.; # [Kg]. a lumped parameter that roughly captures leg inertia and gravitational potential
+    const load_m = 1.1; # [Kg]. a lumped parameter that roughly captures leg inertia and gravitational potential
     const M = diagm([Model.m_body,Model.Jm,Model.Jm,load_m,load_m])
 
     """ Behavior specific lagrangian quantities """
