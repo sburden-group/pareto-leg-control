@@ -107,10 +107,10 @@ module Hopper
     end
 
 _q = [0.,pi/2,-pi/2,0.,0.]
-_q[[4,5]] = -constraints(_q,Designs.default_params)[[1,2]]
+_q[[4,5]] = -stance_constraints(_q,Designs.default_params,[0.,0.])[[1,2]]
 _qdot = zeros(5)
-_DA = constraints_jac(_q,Designs.default_params)
-_DDA = constraints_hess(_q,Designs.default_params)
-_u = control(_q,_qdot,Designs.default_params, [0.,0.])
-_qddot = dynamics(_q,_qdot,_u,Designs.default_params)
+_DA = stance_constraints_jac(_q,Designs.default_params)
+_DDA = stance_constraints_hess(_q,Designs.default_params)
+_u = stance_control(_q,_qdot,Designs.default_params)
+_qddot = stance_dynamics(_q,_qdot,_u,Designs.default_params)
 end
