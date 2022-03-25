@@ -9,7 +9,7 @@ Definition of system model constants
 const g = 9.81
 const m_body = 2.0
 const m_weight = 1.0
-#const Jm = .5/2*(.087^2+.08^2) # rough approximation motor inertia from thick-walled cylinder model.
+# const Jm = .5/2*(.087^2+.08^2) # rough approximation motor inertia from thick-walled cylinder model.
 const Jm = 2e-3
 
 const foot_offset = 0.03 # distance from kinematic chain closure to foot location in meters
@@ -37,11 +37,11 @@ const G = [
 
 """ Begin kinematics """
 function hip_foot_angle(q::Vector{T}) where {T <: Real}
-    (q[θ1_idx]+q[θ2_idx])/2.0
+    (q[θ1_idx]-q[θ2_idx])/2.0
 end
 
 function interior_leg_angle(q::Vector{T}) where {T <: Real}
-    (q[θ1_idx]-q[θ2_idx])/2.0
+    (q[θ1_idx]+q[θ2_idx])/2.0
 end
 
 function leg_length(q::Vector{T}, p::Designs.Params) where {T <: Real}
@@ -85,9 +85,9 @@ function spring_energy(q::Vector{T},p::Designs.Params) where {T <: Real}
     s1_energy = .5*p.s1_k*δx^2+p.s1_Fi*δx
 
     # compute energy in spring 2
-    joint_location = Array{T}([p.l1*sin(θ2),-p.l1*cos(θ2)])
+    joint_location = Array{T}([-p.l1*sin(θ2),-p.l1*cos(θ2)])
     r = (p.l1+p.s2_L+spring_knee_offset)
-    fixed_end = Array{T}([r*sin(p.s2_r),-r*cos(p.s2_r)]) 
+    fixed_end = Array{T}([-r*sin(p.s2_r),-r*cos(p.s2_r)]) 
     free_end = joint_location + spring_knee_offset*(fixed_end-joint_location)/norm(fixed_end-joint_location)
     δx = norm(fixed_end-free_end)
     s2_energy = .5*p.s2_k*δx^2+p.s2_Fi*δx
@@ -108,7 +108,7 @@ function kinetic_energy(q::Vector{T},qdot::Vector{T},p::Designs.Params) where T<
 end
 
 
-_q = [0.,pi/2,-pi/2,0.,0.]
+_q = [0.,pi/2,pi/2,0.,0.]
 _q[1] = kin_constraints(_q,Designs.default_params)[1]
 _qdot = zeros(5)
 _DA = kin_constraints_jac(_q,Designs.default_params)
