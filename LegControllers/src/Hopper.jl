@@ -160,7 +160,7 @@ module Hopper
     Computes the template dynamics at the projection of (q,qdot) in flight mode
     """
     function flight_template_dynamics(q::Vector{T},qdot::Vector{T}) where T<:Real
-        ω = 1*pi 
+        ω = 1.5*pi 
         ζ = 5.
         return -2ζ*ω*qdot - ω^2 * q 
     end
@@ -187,21 +187,23 @@ module Hopper
 
     """ MODE GUARD FUNCTIONS """
     const KNEE_MIN_DIST = 0.04
-    const STANCE_GUARD_KNEE_DIST = KNEE_MIN_DIST-.005
+    const STANCE_GUARD_KNEE_DIST = KNEE_MIN_DIST+.005
+    const FLIGHT_GUARD_KNEE_DIST = KNEE_MIN_DIST+.005
     
     function stance_guard(q::Vector{T},p::Designs.Params) where T<:Real
-        ϕ = .5q[Model.θ1_idx]-.5q[Model.θ2_idx] 
-        asin(STANCE_GUARD_KNEE_DIST/(2*p.l1))-ϕ
+        ϕ = Model.interior_leg_angle(q) 
+        STANCE_GUARD_KNEE_DIST-2*p.l1*sin(ϕ)
     end
 
     function flight_guard(q::Vector{T},p::Designs.Params) where T<:Real
-        ϕ = .5q[Model.θ1_idx]-.5q[Model.θ2_idx] 
-        ϕ - asin(KNEE_MIN_DIST/(2*p.l1))
+        ϕ = Model.interior_leg_angle(q)
+        -STANCE_GUARD_KNEE_DIST+2*p.l1*sin(ϕ)
+
     end
 
 """ precompilation triggers """
 
-_q = [0.,pi/2,-pi/2,0.,0.]
+_q = [0.,pi/2,pi/2,0.,0.]
 _q[[4,5]] = -stance_constraints(_q,Designs.default_params,[0.,0.])[[1,2]]
 _qdot = zeros(5)
 _DA = stance_constraints_jac(_q,Designs.default_params)
@@ -209,7 +211,7 @@ _DDA = stance_constraints_hess(_q,Designs.default_params)
 _u = stance_control(_q,_qdot,Designs.default_params)
 _qddot = stance_dynamics(_q,_qdot,_u,Designs.default_params)
 
-_q = [0.,pi/2,-pi/2,0.,0.]
+_q = [0.,pi/2,pi/2,0.,0.]
 _q[[4,5]] = -flight_constraints(_q,Designs.default_params)[[1,2]]
 _DA = flight_constraints_jac(_q,Designs.default_params)
 _DDA = flight_constraints_hess(_q,Designs.default_params)

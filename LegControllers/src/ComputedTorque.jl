@@ -83,7 +83,7 @@ module ComputedTorque
     end
 
 #dummy variables for triggering precompilation of functions
-_q = [0.,pi/2,-pi/2,0.,0.]
+_q = [0.,pi/2,pi/2,0.,0.]
 _q[[4,5]] = -constraints(_q,Designs.default_params)[[1,2]]
 _qdot = zeros(5)
 _DA = constraints_jac(_q,Designs.default_params)
