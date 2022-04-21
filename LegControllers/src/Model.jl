@@ -74,7 +74,6 @@ end
 function spring_energy(q::Vector{T},p::Designs.Params) where {T <: Real}
     l = leg_length(q,p)
     θ1 = q[θ1_idx]
-    θ2 = q[θ2_idx]
 
     # compute energy in spring 1
     joint_location = Array{T}([p.l1*sin(θ1),-p.l1*cos(θ1)])
@@ -84,19 +83,11 @@ function spring_energy(q::Vector{T},p::Designs.Params) where {T <: Real}
     δx = norm(fixed_end-free_end)
     s1_energy = .5*p.s1_k*δx^2+p.s1_Fi*δx
 
-    # compute energy in spring 2
-    joint_location = Array{T}([-p.l1*sin(θ2),-p.l1*cos(θ2)])
-    r = (p.l1+p.s2_L+spring_knee_offset)
-    fixed_end = Array{T}([-r*sin(p.s2_r),-r*cos(p.s2_r)]) 
-    free_end = joint_location + spring_knee_offset*(fixed_end-joint_location)/norm(fixed_end-joint_location)
-    δx = norm(fixed_end-free_end)
-    s2_energy = .5*p.s2_k*δx^2+p.s2_Fi*δx
-
     # compute energy in spring 3
     δx = p.l1+p.l2+foot_offset-l
     s3_energy = .5*p.s3_k*δx^2
 
-    return T(s1_energy+s2_energy+s3_energy)
+    return T(s1_energy+s3_energy)
 end
 
 function potential_energy(q::Vector{T},p::Designs.Params) where T<:Real

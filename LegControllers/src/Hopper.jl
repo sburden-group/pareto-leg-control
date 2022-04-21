@@ -109,6 +109,24 @@ module Hopper
         (A\b)[end-size(Model.G,2)+1:end]
     end
 
+    function stance_control(q::Vector{T},qdot::Vector{T},a::Vector{T},p::Designs.Params) where T<:Real
+        ∇V = potential_gradient(q,p)
+        DA = stance_constraints_jac(q,p)
+        m = size(DA,1) # number of constraints
+        ddtDA = reshape(stance_constraints_hess(q,p)*qdot,size(DA))
+        dπ = stance_anchor_pushforward()
+        A = vcat(   hcat(M,DA',-Model.G),
+                    hcat(DA,zeros(m,m),zeros(m,size(Model.G,2))),
+                    hcat(dπ, zeros(size(dπ,1),m), zeros(size(dπ,1),size(Model.G,2)))
+        )
+        b = vcat(
+            -∇V,
+            -ddtDA*qdot,
+            a
+        )
+        (A\b)[end-size(Model.G,2)+1:end]
+    end
+
     """ FLIGHT DYNAMICS CODE """
 
     """ Computes constraints in flight (non-contact) mode """
@@ -146,14 +164,18 @@ module Hopper
         return qddot,λ
     end
 
+    const KNEE_MIN_DIST = 0.04
     """ Computes projection from Model coordinates to Template coordinates in flight mode """
     function flight_anchor_projection(q::Vector{T},p::Designs.Params) where T<:Real
-        return [q[4]]
+        ϕ = (q[Model.θ1_idx]-q[Model.θ2_dx])/2
+        return [q[4],p.l1*sin(ϕ)-KNEE_MIN_DIST]
     end
 
     """ Computes projection from Model coordinates to Template coordinates in flight mode """
-    function flight_anchor_pushforward()
-        return [0. 0. 0. 1.0 0.]
+    function flight_anchor_pushforward(q::Vector{T},p::Designs.Params) where T<:Real
+        ϕ = (q[Model.θ1_idx]+q[Model.θ2_dx])/2
+        return [0. 0. 0. 1.0 0.
+                0. .5*cos(ϕ) .5*cos(ϕ) 0. 0.]
     end
     
     """
@@ -171,7 +193,7 @@ module Hopper
         DA = flight_constraints_jac(q,p)
         m = size(DA,1) # number of constraints
         ddtDA = reshape(flight_constraints_hess(q,p)*qdot,size(DA))
-        dπ = flight_anchor_pushforward()
+        dπ = flight_anchor_pushforward(q,p)
         f = flight_template_dynamics(flight_anchor_projection(q,p),dπ*q)
         A = vcat(   hcat(M,DA',-Model.G),
                     hcat(DA,zeros(m,m),zeros(m,size(Model.G,2))),
@@ -185,8 +207,26 @@ module Hopper
         (A\b)[end-size(Model.G,2)+1:end]
     end
 
+    function flight_computed_torque(q::Vector{T},qdot::Vector{T},a::Vector{T},p::Designs.Params) where T<:Real
+        ∇V = potential_gradient(q,p)
+        DA = flight_constraints_jac(q,p)
+        m = size(DA,1) # number of constraints
+        ddtDA = reshape(flight_constraints_hess(q,p)*qdot,size(DA))
+        dπ = flight_anchor_pushforward(q,p)
+        f = flight_template_dynamics(flight_anchor_projection(q,p),dπ*q)
+        A = vcat(   hcat(M,DA',-Model.G),
+                    hcat(DA,zeros(m,m),zeros(m,size(Model.G,2))),
+                    hcat(dπ, zeros(size(dπ,1),m), zeros(size(dπ,1),size(Model.G,2)))
+        )
+        b = vcat(
+            -∇V,
+            -ddtDA*qdot,
+            a
+        )
+        (A\b)[end-size(Model.G,2)+1:end]
+    end
+
     """ MODE GUARD FUNCTIONS """
-    const KNEE_MIN_DIST = 0.04
     const STANCE_GUARD_KNEE_DIST = KNEE_MIN_DIST+.005
     const FLIGHT_GUARD_KNEE_DIST = KNEE_MIN_DIST+.005
     
