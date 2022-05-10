@@ -1,0 +1,12 @@
+README.md
+setup.py
+src/leg_controllers/__init__.py
+src/leg_controllers/designs.py
+src/leg_controllers/finite_difference.py
+src/leg_controllers/handshake.py
+src/leg_controllers/hopper.py
+src/leg_controllers/model.py
+src/leg_controllers.egg-info/PKG-INFO
+src/leg_controllers.egg-info/SOURCES.txt
+src/leg_controllers.egg-info/dependency_links.txt
+src/leg_controllers.egg-info/top_level.txt

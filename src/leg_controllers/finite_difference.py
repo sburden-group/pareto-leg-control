@@ -21,4 +21,5 @@ def hessian(f,x,h):
             dxi = h*delta[:,i]
             dxj = h*delta[:,j]
             hess[...,i,j] = (f(x+dxi+dxj)-f(x+dxi)-f(x+dxj)+f_x)/h**2
-    return (hess+hess.T)/2
+    
+    return (hess+np.transpose(hess,(0,2,1)))/2

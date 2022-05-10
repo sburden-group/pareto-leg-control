@@ -79,9 +79,9 @@ def stance_anchor_pushforward():
 """
 Computes the template dynamics at the projection of (q,qdot) in stance mode
 """
+omega = 5*np.pi
+zeta = 0.1
 def stance_template_dynamics(q,qdot):
-    omega = 5*np.pi
-    zeta = 0.01
     return -2*zeta*omega*qdot - omega**2 * q - np.array([model.g])
 
 """ Computes the Hopper stance controller """
@@ -166,23 +166,24 @@ KNEE_MIN_DIST = 0.04
 def flight_anchor_projection(q,p):
     # TODO: this is not good enough, need to control both foot coordinates
     phi = (q[model.tht1_idx]-model.tht2_idx)/2
-    return np.array([q[3],p.l1*np.sin(phi)-KNEE_MIN_DIST])
+
+    return np.array([.5*q[1]-.5*q[2],.5*q[1]+.5*q[2]])
 
 """ Computes projection from model coordinates to Template coordinates in flight mode """
 def flight_anchor_pushforward(q,p):
-    phi = (q[model.tht1_idx]+q[model.tht2_idx])/2
     return np.array([
-        [0.,0.,0.,1.,0.],
-        [0.,np.cos(phi)/2,np.cos(phi)/2,0.,0.]
+        [0.,.5,-.5,0.,0.],
+        [0.,.5,.5,0.,0.]
     ])
 
 """
 Computes the template dynamics at the projection of (q,qdot) in flight mode
 """
 def flight_template_dynamics(q,qdot):
-    omega = 1.5*np.pi 
-    zeta = 5.
-    return -2*zeta*omega*qdot - omega**2 * q 
+    # omega = 1.5*np.pi 
+    # zeta = 5.
+    # return -2*zeta*omega*qdot - omega**2 * q 
+    return np.zeros(np.size(q))
 
 """ Computes the Hopper flight controller """
 def flight_control(q,qdot,p):
@@ -239,4 +240,4 @@ def stance_guard(q,p):
 
 def flight_guard(q,p):
     ϕ = model.interior_leg_angle(q)
-    return -STANCE_GUARD_KNEE_DIST+2*p.l1*np.sin(ϕ)
+    return -FLIGHT_GUARD_KNEE_DIST+2*p.l1*np.sin(ϕ)

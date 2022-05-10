@@ -1,7 +1,6 @@
 
 import numpy as np
 
-
 class Params:
     def __init__(self, *params):
         self.s1_L = params[0]        # Extension Spring 1 free length

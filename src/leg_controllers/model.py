@@ -7,7 +7,7 @@ Definition of model constants
 """
 
 g = 9.81
-m_body = 2.0
+m_body = 2.15
 m_weight = 1.0
 # const Jm = .5/2*(.087^2+.08^2) # rough approximation motor inertia from thick-walled cylinder model.
 Jm = 2e-3
@@ -36,35 +36,36 @@ G = np.array([
 ])
 
 """ Begin kinematics """
-def hip_foot_angle(q):
-    return (q[tht1_idx]-q[tht2_idx])/2.0
+def hip_foot_angle(tht1,tht2):
+    return (tht1-tht2)/2.0
 
-def interior_leg_angle(q):
-    return (q[tht1_idx]+q[tht2_idx])/2.0
+def interior_leg_angle(tht1,tht2):
+    return (tht1+tht2)/2.0
 
-def leg_length(q,p):
-    psi = interior_leg_angle(q)
+def leg_length(psi,p):
     return p.l1*np.cos(psi)+np.sqrt(p.l2**2-(p.l1*np.sin(psi))**2)+foot_offset
 
 """
 Computes holonomic constraints associated with five-bar mechanism
 """
 def kin_constraints(q,p):
-    tht = hip_foot_angle(q)
-    l = leg_length(q,p)
+    tht = hip_foot_angle(q[tht1_idx],q[tht2_idx])
+    psi = interior_leg_angle(q[tht1_idx],q[tht2_idx])
+    l = leg_length(psi,p)
     return q[foot_idx]-np.array([l*np.sin(tht),q[body_idx]-l*np.cos(tht)])
 
 def kin_constraints_jac(q,p):
     f = lambda q: kin_constraints(q,p)
-    return central_difference(f,q,1e-4)
+    return central_difference(f,q,1e-6)
 
 def kin_constraints_hess(q,p):
     f = lambda q: kin_constraints(q,p)
-    return hessian(f,q,1e-4)
+    return hessian(f,q,1e-6)
 
 """ Computes potential energy of springs. """
 def spring_energy(q,p):
-    l = leg_length(q,p)
+    psi = interior_leg_angle(q[tht1_idx],q[tht2_idx])
+    l = leg_length(psi,p)
     tht1 = q[tht1_idx]
 
     # compute energy in spring 1

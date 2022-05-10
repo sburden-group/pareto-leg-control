@@ -1,0 +1,17 @@
+Metadata-Version: 2.1
+Name: leg-controllers
+Version: 0.0.1
+Summary: Control routines for the pareto leg project
+Home-page: https://github.com/sburden-group/pareto-leg-control
+Author: Joseph Sullivan
+Author-email: jgs6156@uw.edu
+License: UNKNOWN
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+
+# pareto-leg-control
+
