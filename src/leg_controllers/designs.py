@@ -14,7 +14,7 @@ class Params:
 
 def pack(p):
     return np.array([
-        p.s1_l, p.s1_k, p.s1_Fi, p.s1_r, p.s3_L, p.s3_k, p.l1, p.l2
+        p.s1_L, p.s1_k, p.s1_Fi, p.s1_r, p.s3_L, p.s3_k, p.l1, p.l2
         ])
 
 def unpack(x):

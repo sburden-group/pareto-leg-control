@@ -13,7 +13,7 @@ def potential_energy(q,p):
 
 def potential_gradient(q,p):
     f = lambda q: potential_energy(q,p)
-    return central_difference(f,q,1e-6) 
+    return central_difference(f,q,1e-9) 
 
 # This is a rough approximation, a more accurate model would 
 # compute the kinetic energy in all links, and then M would be given from

@@ -73,7 +73,7 @@ def spring_energy(q,p):
     r = (p.l1+p.s1_L+spring_knee_offset)
     fixed_end = np.array([r*np.sin(p.s1_r),-r*np.cos(p.s1_r)]) 
     free_end = joint_location + spring_knee_offset*(fixed_end-joint_location)/norm(fixed_end-joint_location)
-    δx = norm(fixed_end-free_end)
+    δx = norm(fixed_end-free_end)-p.s1_L
     s1_energy = .5*p.s1_k*δx**2+p.s1_Fi*δx
 
     # compute energy in spring 3
